@@ -150,10 +150,10 @@ const PDF = ({ data }: PDFProps) => {
         <Image src={logoPlaceholder} style={styles.logo} />
         <Text style={styles.heading}>Medical Case Report</Text>
         <Text style={{ ...styles.text, color: "#999999" }}>
-          Date {new Date().toDateString()}
+          Date: {new Date().toDateString()}
         </Text>
         <Text style={{ ...styles.text, color: "#999999", marginBottom: 15 }}>
-          Time {new Date().toLocaleTimeString()}
+          Time: {new Date().toLocaleTimeString()}
         </Text>
         <View style={styles.section}>
           <Text style={styles.subheading}>Patient Information</Text>
