@@ -52,11 +52,18 @@ type MedicalCaseData = {
     frequency: string;
   }[];
   prescription: Prescription;
-  completedAt: string;
+  createdAt: string;
 };
 
 interface PDFProps {
   data: MedicalCaseData;
+}
+
+export function getTitleCase(str?: string) {
+  if (!str) {
+    return "";
+  }
+  return str.toLowerCase().replace(/\b(\w)/g, (s) => s.toUpperCase());
 }
 
 const logoPlaceholder = "./Logo.png"; // Replace with actual logo URL
@@ -75,21 +82,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 800,
     color: "#131925",
-    marginBottom: 10,
+    marginBottom: 8,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 8,
   },
   subheading: {
     fontSize: 15,
     fontWeight: 500,
     color: "#131925",
-    marginBottom: 10,
+    marginBottom: 8,
   },
   text: {
     fontSize: 12,
     color: "#212935",
-    lineHeight: 1.67,
+    lineHeight: 1.35,
   },
   divider: {
     width: "100%",
@@ -104,6 +111,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRightWidth: 0,
     borderBottomWidth: 0,
+    borderRadius: 5,
   },
   tableRow: {
     margin: "auto",
@@ -125,6 +133,14 @@ const styles = StyleSheet.create({
     textAlign: "left",
     width: "100%",
   },
+  borederdSection: {
+    borderStyle: "solid",
+    borderWidth: 1,
+    padding: 8,
+    paddingBottom: 3,
+    width: "auto",
+    borderRadius: 5,
+  },
 });
 
 const PDF = ({ data }: PDFProps) => {
@@ -133,51 +149,59 @@ const PDF = ({ data }: PDFProps) => {
       <Page size="A4" style={styles.page}>
         <Image src={logoPlaceholder} style={styles.logo} />
         <Text style={styles.heading}>Medical Case Report</Text>
+        <Text style={{ ...styles.text, color: "#999999" }}>
+          Date {new Date().toDateString()}
+        </Text>
+        <Text style={{ ...styles.text, color: "#999999", marginBottom: 15 }}>
+          Time {new Date().toLocaleTimeString()}
+        </Text>
         <View style={styles.section}>
           <Text style={styles.subheading}>Patient Information</Text>
-          <Text style={styles.text}>Name: {data.patient.name}</Text>
-          <Text style={styles.text}>Email: {data.patient.email}</Text>
-          <Text style={styles.text}>Phone: {data.patient.phone}</Text>
+          <View style={{ ...styles.section, ...styles.borederdSection }}>
+            <Text style={styles.text}>
+              Name: {getTitleCase(data.patient.name)}
+            </Text>
+            <Text style={styles.text}>Email: {data.patient.email}</Text>
+            <Text style={styles.text}>Phone: {data.patient.phone}</Text>
+          </View>
         </View>
         <View style={styles.section}>
           <Text style={styles.subheading}>Doctor Information</Text>
-          <Text style={styles.text}>Name: {data.doctor.name}</Text>
-          <Text style={styles.text}>Email: {data.doctor.email}</Text>
-          <Text style={styles.text}>Phone: {data.doctor.phone}</Text>
+          <View style={{ ...styles.section, ...styles.borederdSection }}>
+            <Text style={styles.text}>
+              Name: {getTitleCase(data.doctor.name)}
+            </Text>
+            <Text style={styles.text}>Email: {data.doctor.email}</Text>
+            <Text style={styles.text}>Phone: {data.doctor.phone}</Text>
+          </View>
         </View>
         <View style={styles.section}>
           <Text style={styles.subheading}>Complaints</Text>
-          {data.complaints.map((complaint, index) => (
-            <Text key={index} style={styles.text}>
-              {`${index + 1}. ${complaint.description}, Duration: ${
-                complaint.duration
-              } days, Severity: ${complaint.severity}, Frequency: ${
-                complaint.frequency
-              }`}
-            </Text>
-          ))}
+          <View style={{ ...styles.section, ...styles.borederdSection }}>
+            {data.complaints.map((complaint, index) => (
+              <Text key={index} style={styles.text}>
+                {`${index + 1}. ${complaint.description}, Duration: ${
+                  complaint.duration
+                } days, Severity: ${complaint.severity}, Frequency: ${
+                  complaint.frequency
+                }`}
+              </Text>
+            ))}
+          </View>
         </View>
         <View style={styles.section}>
           <Text style={styles.subheading}>Diagnosis</Text>
-          {data.diagnosis.map((item, index) => (
-            <Text key={index} style={styles.text}>
-              {`${index + 1}. ${item}`}
-            </Text>
-          ))}
+          <View style={{ ...styles.section, ...styles.borederdSection }}>
+            {data.diagnosis.map((item, index) => (
+              <Text key={index} style={styles.text}>
+                {`${index + 1}. ${item}`}
+              </Text>
+            ))}
+          </View>
         </View>
-        {/* <View style={styles.section}>
-          <Text style={styles.subheading}>Prescription</Text>
-          <Text style={styles.text}>Medications:</Text>
-          {data.prescription.medications.map((medication, index) => (
-            <Text key={index} style={styles.text}>
-              {`${index + 1}. ${medication.name}`}
-            </Text>
-          ))}
-          <Text style={styles.text}>Advice: {data.prescription.advice}</Text>
-        </View> */}
         <View style={styles.section}>
           <Text style={styles.subheading}>Prescription</Text>
-          <Text style={styles.text}>Medications:</Text>
+          <Text style={{ ...styles.text, marginBottom: 5 }}>Medications:</Text>
           <View style={styles.table}>
             <View style={styles.tableRow}>
               <View style={{ ...styles.tableCol, width: "40%" }}>
@@ -193,7 +217,9 @@ const PDF = ({ data }: PDFProps) => {
             {data.prescription.medications.map((medication, index) => (
               <View style={styles.tableRow} key={index}>
                 <View style={{ ...styles.tableCol, width: "40%" }}>
-                  <Text style={styles.tableCell}>{medication.name}</Text>
+                  <Text style={styles.tableCell}>
+                    {getTitleCase(medication.name)}
+                  </Text>
                 </View>
                 <View style={{ ...styles.tableCol, width: "15%" }}>
                   <Text style={styles.tableCell}>{medication.quantity}</Text>

@@ -89,7 +89,7 @@ app.post("/", async (req, res) => {
       ],
       advice: "Take Bed Rest for two days",
     },
-    completedAt: "2023-08-17T13:06:54.709Z",
+    createdAt: "2023-08-17T13:06:54.709Z",
   });
 
   // Setting up the response headers
