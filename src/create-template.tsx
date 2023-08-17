@@ -6,6 +6,7 @@ import ReactPDF, {
   Document,
   StyleSheet,
   Image,
+  Font,
 } from "@react-pdf/renderer";
 
 type Medication = {
@@ -15,6 +16,9 @@ type Medication = {
     afternoon: { beforeMeal: boolean; afterMeal: boolean };
     night: { beforeMeal: boolean; afterMeal: boolean };
   };
+  quantity: number;
+  notes: string;
+  type: "dosage" | "notes";
 };
 
 type Prescription = {
@@ -68,8 +72,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   heading: {
-    fontSize: 20,
-    fontWeight: 600,
+    fontSize: 18,
+    fontWeight: 800,
     color: "#131925",
     marginBottom: 10,
   },
@@ -77,7 +81,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   subheading: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 500,
     color: "#131925",
     marginBottom: 10,
@@ -92,6 +96,34 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#999999",
     margin: "16px 0",
+  },
+  table: {
+    display: "flex",
+    width: "auto",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+  },
+  tableRow: {
+    margin: "auto",
+    flexDirection: "row",
+  },
+  tableCol: {
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+    alignContent: "flex-start",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: 5,
+  },
+  tableCell: {
+    margin: 5,
+    fontSize: 10,
+    textAlign: "left",
+    width: "100%",
   },
 });
 
@@ -133,7 +165,7 @@ const PDF = ({ data }: PDFProps) => {
             </Text>
           ))}
         </View>
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.subheading}>Prescription</Text>
           <Text style={styles.text}>Medications:</Text>
           {data.prescription.medications.map((medication, index) => (
@@ -142,6 +174,64 @@ const PDF = ({ data }: PDFProps) => {
             </Text>
           ))}
           <Text style={styles.text}>Advice: {data.prescription.advice}</Text>
+        </View> */}
+        <View style={styles.section}>
+          <Text style={styles.subheading}>Prescription</Text>
+          <Text style={styles.text}>Medications:</Text>
+          <View style={styles.table}>
+            <View style={styles.tableRow}>
+              <View style={{ ...styles.tableCol, width: "40%" }}>
+                <Text style={styles.tableCell}>Name</Text>
+              </View>
+              <View style={{ ...styles.tableCol, width: "15%" }}>
+                <Text style={styles.tableCell}>Quantity</Text>
+              </View>
+              <View style={{ ...styles.tableCol, width: "45%" }}>
+                <Text style={styles.tableCell}>Dosage</Text>
+              </View>
+            </View>
+            {data.prescription.medications.map((medication, index) => (
+              <View style={styles.tableRow} key={index}>
+                <View style={{ ...styles.tableCol, width: "40%" }}>
+                  <Text style={styles.tableCell}>{medication.name}</Text>
+                </View>
+                <View style={{ ...styles.tableCol, width: "15%" }}>
+                  <Text style={styles.tableCell}>{medication.quantity}</Text>
+                </View>
+                <View style={{ ...styles.tableCol, width: "45%" }}>
+                  <Text style={styles.tableCell}>
+                    {medication.type == "notes"
+                      ? medication.notes
+                      : `Morning: ${
+                          medication.dosage.morning.beforeMeal
+                            ? "Before Meal"
+                            : medication.dosage.morning.afterMeal
+                            ? "After Meal"
+                            : "-"
+                        }
+                  Afternoon: ${
+                    medication.dosage.afternoon.beforeMeal
+                      ? "Before Meal"
+                      : medication.dosage.afternoon.afterMeal
+                      ? "After Meal"
+                      : "-"
+                  }
+                  Night: ${
+                    medication.dosage.night.beforeMeal
+                      ? "Before Meal"
+                      : medication.dosage.night.afterMeal
+                      ? "After Meal"
+                      : "-"
+                  }`}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          <Text style={{ ...styles.text, marginTop: 10 }}>
+            Advice: {data.prescription.advice}
+          </Text>
         </View>
       </Page>
     </Document>
