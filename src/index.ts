@@ -70,7 +70,7 @@ app.post("/", async (req, res) => {
     {
       from: `IIITM Health Center <${process.env.SMTP_EMAIL}>`, // sender address
       to: req.body.patient.email, // receiver email
-      subject: `Healthe Report for Appointment on ${new Date(
+      subject: `Health Report for Appointment on ${new Date(
         req.body.createdAt
       ).toDateString()}`, // Subject line
       html: `<p>Hi ${req.body.patient.name}, Please find your health report here: ${publicURL}</p>`,
