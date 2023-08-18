@@ -1,6 +1,6 @@
 import express from "express";
 import createTemplate from "./phr-template";
-
+import fs from "fs";
 const app = express();
 app.use(express.json());
 const port = 8080;
@@ -13,12 +13,15 @@ app.post("/", async (req, res) => {
   // Calling the template render func with dynamic data
   const result = await createTemplate(req.body);
 
-  // Setting up the response headers
-  res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", `attachment; filename=export.pdf`);
-
-  // Streaming our resulting pdf back to the user
-  result.pipe(res);
+  const ws = fs.createWriteStream(`./files/report${req.body._id}.pdf`);
+  result.pipe(ws);
+  ws.on("finish", () => res.status(200).send("Done"));
+  ws.on("error", (err) =>
+    res.send(400).send({
+      message: "Something went wrong",
+      err: err,
+    })
+  );
 });
 
 app.listen(port, () => {
